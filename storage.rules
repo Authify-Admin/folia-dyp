@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Product images - Public read, admin write
+    match /products/{productId}/{allPaths=**} {
+      allow read: if true;  // Anyone can view product images
+      allow write: if true;  // Allow admin to upload/delete product images
+      // Note: In production, you may want to add authentication check:
+      // allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Return request images - Public read for admin, public write for customers
+    match /returns/{orderNumber}/{allPaths=**} {
+      allow read: if true;  // Admin and customers can view return images
+      allow write: if true;  // Allow customers to upload return evidence images
+    }
+
+    // Deny access to all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
