@@ -207,15 +207,20 @@ export default function CheckoutPage() {
         }
       }
 
-      // Confirmation email — the order survives even if this fails.
-      try {
-        await fetch("/api/send-order-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...order, id: createdOrderId }),
-        });
-      } catch (emailError) {
-        console.error("Error sending order confirmation email:", emailError);
+      // Confirmation email — only when the shopper actually gave an email
+      // (phone-login accounts may not have one). The order survives even if
+      // this fails. TODO: when no email, send an SMS confirmation instead
+      // (needs a transactional SMS provider — Firebase only sends login OTPs).
+      if (order.customerEmail?.trim()) {
+        try {
+          await fetch("/api/send-order-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...order, id: createdOrderId }),
+          });
+        } catch (emailError) {
+          console.error("Error sending order confirmation email:", emailError);
+        }
       }
 
       setOrderId(newOrderId);
@@ -495,7 +500,10 @@ export default function CheckoutPage() {
                       </div>
                       <div>
                         <label htmlFor="customerEmail" className="field-label">
-                          Email
+                          Email{" "}
+                          <span className="font-normal normal-case tracking-normal text-ink/45">
+                            (optional — for an email receipt)
+                          </span>
                         </label>
                         <input
                           id="customerEmail"
@@ -503,7 +511,6 @@ export default function CheckoutPage() {
                           type="email"
                           value={formData.customerEmail}
                           onChange={handleInputChange}
-                          required
                           autoComplete="email"
                           placeholder="asha@example.com"
                           className="field-input"

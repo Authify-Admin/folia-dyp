@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore, initializeFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -23,5 +24,7 @@ const db = isNew
   ? initializeFirestore(app, { ignoreUndefinedProperties: true })
   : getFirestore(app);
 const storage = getStorage(app);
+// Firebase Authentication — used for phone (SMS OTP) sign-in on /auth.
+const auth = getAuth(app);
 
-export { app, db, storage };
+export { app, db, storage, auth };

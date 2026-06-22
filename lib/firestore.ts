@@ -344,6 +344,27 @@ export const userOperations = {
     }
   },
 
+  // Get user by phone number (E.164, e.g. +919008627070) — used by SMS OTP login
+  async getByPhone(phone: string): Promise<User | null> {
+    try {
+      const q = query(usersCollection, where('phone', '==', phone));
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        return null;
+      }
+
+      const userDoc = snapshot.docs[0];
+      return {
+        id: userDoc.id,
+        ...userDoc.data(),
+      } as User;
+    } catch (error) {
+      console.error('Error fetching user by phone:', error);
+      return null;
+    }
+  },
+
   // Get user by ID
   async getById(id: string): Promise<User | null> {
     try {
