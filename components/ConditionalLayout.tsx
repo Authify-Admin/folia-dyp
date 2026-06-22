@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
@@ -20,6 +21,7 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   return (
     <SmoothScroll>
       <ScrollToTop />
+      <AnnouncementBar />
       <Navbar />
       <CartDrawer />
       <main className="min-h-screen">{children}</main>

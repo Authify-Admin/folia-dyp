@@ -15,11 +15,13 @@ import { useFocusTrap } from "@/lib/use-focus-trap";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-const NAV_LINKS = [
+const NAV_LINKS: { name: string; href: string; highlight?: boolean }[] = [
   { name: "Shop", href: "/products" },
   { name: "Learn", href: "/learn" },
   { name: "Story", href: "/story" },
-  { name: "Contact", href: "/contact" },
+  // The free consultation is the brand's headline service — surfaced here as a
+  // highlighted item rather than a plain "Contact" link.
+  { name: "Plant Doctor", href: "/contact", highlight: true },
 ];
 
 export function Navbar() {
@@ -79,8 +81,11 @@ export function Navbar() {
   return (
     <>
       <header
+        // Offset beneath the Plant Doctor announcement bar (its height lives in
+        // --ann-h; falls back to the bar height before JS runs, 0 once dismissed).
+        style={{ top: "var(--ann-h, 2.25rem)" }}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-all duration-700",
+          "fixed inset-x-0 z-50 transition-all duration-700",
           scrolled && !menuOpen
             ? "border-b border-ink/10 bg-parchment/90 backdrop-blur-md"
             : "border-b border-transparent bg-transparent"
@@ -122,10 +127,17 @@ export function Navbar() {
                   key={link.name}
                   href={link.href}
                   className={cn(
-                    "link-rule text-[0.75rem] font-bold uppercase tracking-[0.22em] transition-colors duration-300",
-                    pathname === link.href ? "text-ink" : "text-ink/70 hover:text-ink"
+                    "link-rule inline-flex items-center gap-1.5 text-[0.75rem] font-bold uppercase tracking-[0.22em] transition-colors duration-300",
+                    link.highlight
+                      ? "text-forest hover:text-forest-deep"
+                      : pathname === link.href
+                      ? "text-ink"
+                      : "text-ink/70 hover:text-ink"
                   )}
                 >
+                  {link.highlight && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-clay" aria-hidden />
+                  )}
                   {link.name}
                 </Link>
               ))}
@@ -277,7 +289,12 @@ export function Navbar() {
                       <Link
                         href={link.href}
                         onClick={() => setMenuOpen(false)}
-                        className="font-display block py-2 text-[2.75rem] font-light leading-tight text-cream transition-colors duration-300 hover:text-sage"
+                        className={cn(
+                          "font-display block py-2 text-[2.75rem] font-light leading-tight transition-colors duration-300",
+                          link.href === "/contact"
+                            ? "text-sage"
+                            : "text-cream hover:text-sage"
+                        )}
                       >
                         {link.name}
                       </Link>

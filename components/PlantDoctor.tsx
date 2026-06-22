@@ -39,9 +39,16 @@ export function PlantDoctor() {
               tell you exactly what to do — free, with no purchase needed. It is
               the helping hand behind the brand.
             </p>
+            <div className="mt-7 inline-flex items-center gap-2.5 rounded-full border border-sage/40 bg-sage/5 px-4 py-2 text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-sage">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sage/70" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-sage" />
+              </span>
+              Free · A reply within 24 hours
+            </div>
             <Link
               href="/contact"
-              className="link-rule group mt-9 inline-flex text-[0.75rem] font-bold uppercase tracking-[0.2em] text-cream hover:text-sage"
+              className="link-rule group mt-8 flex text-[0.75rem] font-bold uppercase tracking-[0.2em] text-cream hover:text-sage"
             >
               Ask the Plant Doctor
               <ArrowRight

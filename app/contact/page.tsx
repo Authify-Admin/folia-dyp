@@ -102,7 +102,7 @@ export default function ContactPage() {
           {/* The invitation */}
           <div className="lg:w-[45%]">
             <Reveal y={20}>
-              <p className="eyebrow text-forest">Folia Plant Doctor</p>
+              <p className="eyebrow text-forest">Folia Plant Doctor · Free</p>
             </Reveal>
             <TextReveal
               as="h1"
@@ -110,12 +110,21 @@ export default function ContactPage() {
               className="font-display mt-6 text-4xl font-light leading-[1.05] tracking-[-0.015em] text-ink sm:text-6xl"
               stagger={0.06}
             />
+            <Reveal delay={0.25}>
+              <div className="mt-7 inline-flex items-center gap-2.5 border border-forest/30 bg-forest/5 px-4 py-2 text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-forest">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-forest/60" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-forest" />
+                </span>
+                We reply within 24 hours
+              </div>
+            </Reveal>
             <Reveal delay={0.3}>
-              <p className="prose-editorial mt-8 max-w-md text-ink/65">
+              <p className="prose-editorial mt-7 max-w-md text-ink/65">
                 Our free plant-care consultation. Share a photo of the trouble —
                 a yellowing leaf, a pest you can&rsquo;t place, a plant that&rsquo;s
                 sulking — and a real gardener will diagnose it and tell you exactly
-                what to do. No purchase needed.
+                what to do, usually within a day. No purchase needed.
               </p>
             </Reveal>
             <Reveal delay={0.35}>
