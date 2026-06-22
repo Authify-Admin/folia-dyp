@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { useRef, useState } from "react";
+import { ArrowRight, Check, ImageIcon, X } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 import { TextReveal } from "@/components/motion/TextReveal";
+import { PLANT_DOCTOR_POINTS } from "@/components/PlantDoctor";
+import { POLICY_FACTS } from "@/lib/policies";
+import { uploadPlantDoctorImage } from "@/lib/storage";
+
+const MAX_PHOTO_BYTES = 10 * 1024 * 1024; // 10MB
 
 /**
  * The correspondence desk. The form still posts to the existing
@@ -18,6 +23,10 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState("");
+  const [photoError, setPhotoError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -25,11 +34,43 @@ export default function ContactPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setPhotoError("Please choose an image file (JPG, PNG or WEBP).");
+      return;
+    }
+    if (file.size > MAX_PHOTO_BYTES) {
+      setPhotoError("That image is over 10MB — please pick a smaller one.");
+      return;
+    }
+    setPhotoError("");
+    setPhoto(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  };
+
+  const removePhoto = () => {
+    setPhoto(null);
+    setPhotoPreview("");
+    setPhotoError("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
+      // The photo can't be POSTed to the Google Form directly (anonymous file
+      // uploads aren't supported via no-cors), so upload it to Firebase Storage
+      // and pass the link along in the message body.
+      let messageBody = formData.message;
+      if (photo) {
+        const photoUrl = await uploadPlantDoctorImage(photo);
+        messageBody += `\n\nPhoto: ${photoUrl}`;
+      }
+
       const GOOGLE_FORM_URL =
         "https://docs.google.com/forms/d/e/1FAIpQLScOG4ge_d3-cayvh4JzqrFX84jqtSygPmgFklR-rZG0XcTmxw/formResponse";
 
@@ -37,7 +78,7 @@ export default function ContactPage() {
       googleFormData.append("entry.1469692068", formData.name);
       googleFormData.append("entry.1987490862", formData.email);
       googleFormData.append("entry.69381457", formData.subject);
-      googleFormData.append("entry.417485980", formData.message);
+      googleFormData.append("entry.417485980", messageBody);
 
       await fetch(GOOGLE_FORM_URL, {
         method: "POST",
@@ -50,6 +91,7 @@ export default function ContactPage() {
       setIsSubmitting(false);
       setSubmitted(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
+      removePhoto();
     }
   };
 
@@ -60,24 +102,48 @@ export default function ContactPage() {
           {/* The invitation */}
           <div className="lg:w-[45%]">
             <Reveal y={20}>
-              <p className="eyebrow text-forest">Contact</p>
+              <p className="eyebrow text-forest">Folia Plant Doctor</p>
             </Reveal>
             <TextReveal
               as="h1"
-              text={"Write to us.\nGardeners answer."}
+              text={"Send a photo.\nA gardener answers."}
               className="font-display mt-6 text-4xl font-light leading-[1.05] tracking-[-0.015em] text-ink sm:text-6xl"
               stagger={0.06}
             />
             <Reveal delay={0.3}>
               <p className="prose-editorial mt-8 max-w-md text-ink/65">
-                A yellowing leaf you can&rsquo;t diagnose, a question about an
-                order, or advice on what your balcony needs first — send it
-                over. Real people read these, usually with soil under their
-                fingernails.
+                Our free plant-care consultation. Share a photo of the trouble —
+                a yellowing leaf, a pest you can&rsquo;t place, a plant that&rsquo;s
+                sulking — and a real gardener will diagnose it and tell you exactly
+                what to do. No purchase needed.
               </p>
+            </Reveal>
+            <Reveal delay={0.35}>
+              <ul className="mt-7 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
+                {PLANT_DOCTOR_POINTS.map((point) => (
+                  <li
+                    key={point}
+                    className="flex items-center gap-2.5 text-[0.9375rem] text-ink/75"
+                  >
+                    <Check className="h-4 w-4 shrink-0 text-forest" strokeWidth={2} />
+                    {point}
+                  </li>
+                ))}
+              </ul>
             </Reveal>
             <Reveal delay={0.4}>
               <dl className="hairline-t mt-12 space-y-5 pt-8">
+                <div>
+                  <dt className="eyebrow text-ink/65">Email</dt>
+                  <dd className="mt-1.5 text-[0.9375rem] text-ink/75">
+                    <a href={POLICY_FACTS.emailHref} className="link-rule text-ink">
+                      {POLICY_FACTS.email}
+                    </a>
+                    <span className="block text-ink/55">
+                      {POLICY_FACTS.supportHours} · replies {POLICY_FACTS.replyWindow}
+                    </span>
+                  </dd>
+                </div>
                 <div>
                   <dt className="eyebrow text-ink/65">Orders & returns</dt>
                   <dd className="mt-1.5 text-[0.9375rem] text-ink/75">
@@ -110,9 +176,17 @@ export default function ContactPage() {
                   </dd>
                 </div>
                 <div>
-                  <dt className="eyebrow text-ink/65">Growing in</dt>
+                  <dt className="eyebrow text-ink/65">Trade &amp; partnerships</dt>
                   <dd className="mt-1.5 text-[0.9375rem] text-ink/75">
-                    India — free doorstep delivery, nationwide.
+                    Distributors, retailers, nurseries, landscapers and corporate
+                    gifting — write to us and mark it &ldquo;Partnership&rdquo;.
+                  </dd>
+                </div>
+                <div>
+                  <dt className="eyebrow text-ink/65">Where to find us</dt>
+                  <dd className="mt-1.5 text-[0.9375rem] text-ink/75">
+                    This website, plus Amazon, garden centres and nurseries across
+                    India — with free doorstep delivery, nationwide.
                   </dd>
                 </div>
               </dl>
@@ -139,6 +213,61 @@ export default function ContactPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-7">
+                  <div>
+                    <label className="field-label">
+                      Your plant&rsquo;s photo{" "}
+                      <span className="font-normal normal-case tracking-normal text-ink/45">
+                        (optional, but it helps)
+                      </span>
+                    </label>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoSelect}
+                      className="hidden"
+                    />
+                    {photoPreview ? (
+                      <div className="relative mt-1 overflow-hidden border border-ink/15 bg-white/50">
+                        {/* Plain <img>: blob: previews can't go through the Next optimizer. */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={photoPreview}
+                          alt="Your plant"
+                          className="max-h-72 w-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={removePhoto}
+                          aria-label="Remove photo"
+                          className="absolute right-3 top-3 flex items-center gap-1.5 bg-ink/70 px-3 py-1.5 text-xs font-medium text-parchment backdrop-blur transition-colors hover:bg-ink"
+                        >
+                          <X className="h-3.5 w-3.5" strokeWidth={2} />
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="mt-1 flex w-full flex-col items-center justify-center border border-dashed border-ink/25 bg-white/40 px-6 py-10 text-center transition-colors hover:border-forest hover:bg-forest/5"
+                      >
+                        <ImageIcon
+                          className="mb-3 h-9 w-9 text-ink/30"
+                          strokeWidth={1.25}
+                        />
+                        <span className="text-[0.9375rem] font-medium text-ink/75">
+                          Click to add a photo of your plant
+                        </span>
+                        <span className="mt-1 text-[0.8125rem] text-ink/50">
+                          A clear shot of the leaf or pest helps · JPG, PNG or WEBP, up to 10MB
+                        </span>
+                      </button>
+                    )}
+                    {photoError && (
+                      <p className="mt-2 text-[0.8125rem] text-clay">{photoError}</p>
+                    )}
+                  </div>
                   <div className="grid grid-cols-1 gap-7 sm:grid-cols-2">
                     <div>
                       <label htmlFor="name" className="field-label">

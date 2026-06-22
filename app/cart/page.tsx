@@ -8,6 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { blurFor } from "@/lib/blur-data";
 import { Reveal } from "@/components/motion/Reveal";
 import { TextReveal } from "@/components/motion/TextReveal";
+import { Guarantees } from "@/components/Guarantees";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -183,6 +184,10 @@ export default function CartPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="pb-24 sm:pb-28">
+        <Guarantees heading="Risk-free, every order" />
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 const NAV_LINKS = [
   { name: "Shop", href: "/products" },
+  { name: "Learn", href: "/learn" },
   { name: "Story", href: "/story" },
   { name: "Contact", href: "/contact" },
 ];

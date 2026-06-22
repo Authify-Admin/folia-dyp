@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { POLICY_FACTS } from "@/lib/policies";
 
 const SHOP_LINKS = [
   { name: "All products", href: "/products" },
@@ -14,13 +15,16 @@ const SHOP_LINKS = [
 
 const COMPANY_LINKS = [
   { name: "Our story", href: "/story" },
+  { name: "Field guide", href: "/learn" },
   { name: "Contact", href: "/contact" },
   { name: "Track order", href: "/track-order" },
 ];
 
 const CARE_LINKS = [
+  { name: "Shipping policy", href: "/shipping" },
+  { name: "Returns & refunds", href: "/returns" },
+  { name: "Privacy policy", href: "/privacy" },
   { name: "Terms of service", href: "/terms" },
-  { name: "Privacy", href: "/privacy" },
 ];
 
 export function Footer() {
@@ -115,9 +119,18 @@ export function Footer() {
               />
             </Link>
             <p className="mt-5 max-w-[16rem] text-sm leading-relaxed text-cream/65">
-              Organic plant care from people who have spent decades with their
-              hands in the soil.
+              Organic plant care by My Aangan Eco Pvt Ltd, backed by the legacy
+              of Amruth Organic Fertilizers — decades of growing expertise,
+              simplified for your home.
             </p>
+            <div className="mt-6 space-y-1.5 text-sm text-cream/65">
+              <a href={POLICY_FACTS.emailHref} className="block transition-colors hover:text-sage">
+                {POLICY_FACTS.email}
+              </a>
+              <a href={POLICY_FACTS.phoneHref} className="block transition-colors hover:text-sage">
+                {POLICY_FACTS.phone}
+              </a>
+            </div>
           </div>
 
           {[
@@ -145,7 +158,9 @@ export function Footer() {
 
         {/* Bottom rule */}
         <div className="flex flex-col items-center justify-between gap-3 border-t border-cream/12 py-7 text-xs text-cream/60 sm:flex-row">
-          <p>© {new Date().getFullYear()} Folia. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Folia · A brand of My Aangan Eco Pvt Ltd
+          </p>
           <p className="eyebrow !text-[0.625rem] text-cream/55">
             Planting Simplified — Grown in India
           </p>

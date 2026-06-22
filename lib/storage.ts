@@ -106,6 +106,19 @@ export const getProductImages = async (productId: string): Promise<string[]> => 
   }
 };
 
+// Upload a Plant Doctor photo from the public contact form.
+// Reuses the customer-writable `returns/` namespace on purpose: Storage rules
+// only allow anonymous (unauthenticated) writes under products/ and returns/,
+// so a dedicated `plant-doctor/` path would be denied on the live site until
+// the storage rules are redeployed. Returns the public download URL.
+export const uploadPlantDoctorImage = async (file: File): Promise<string> => {
+  const timestamp = Date.now();
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const storageRef = ref(storage, `returns/plant-doctor/${timestamp}_${safeName}`);
+  await uploadBytes(storageRef, file);
+  return await getDownloadURL(storageRef);
+};
+
 // Upload multiple images for a return request
 export const uploadReturnImages = async (
   files: File[],

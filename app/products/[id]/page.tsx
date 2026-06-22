@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, Check, Minus, Plus } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Minus, Plus } from "lucide-react";
 import type { Product, ProductVariant } from "@/lib/types";
 import { productOperations } from "@/lib/firestore";
 import { useCart } from "@/contexts/CartContext";
@@ -15,10 +15,20 @@ import {
   slugForProduct,
 } from "@/lib/catalog";
 import { productForCart, trackAddToCart } from "@/lib/cart-helpers";
+import { ratingSummary } from "@/lib/reviews";
+import { PRODUCT_ASSURANCES } from "@/lib/policies";
 import { ParallaxImage } from "@/components/motion/ParallaxImage";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { ProductCard } from "@/components/product/ProductCard";
+import { Reviews } from "@/components/product/Reviews";
+import { Stars } from "@/components/product/Stars";
+import { Guarantees } from "@/components/Guarantees";
+import {
+  Illustration,
+  ILLUSTRATION_FOR_SLUG,
+  RITUAL_GLYPHS,
+} from "@/components/illustrations/Illustration";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -165,6 +175,9 @@ export default function ProductDetailPage() {
   const heroImage = product.images?.[0] ?? product.image;
   const altImage = product.images?.[1];
   const soldOut = stock <= 0;
+  const slug = slugForProduct(product);
+  const summary = ratingSummary(slug);
+  const productGlyph = ILLUSTRATION_FOR_SLUG[slug] ?? "sprout";
 
   return (
     <div className="bg-parchment">
@@ -235,6 +248,21 @@ export default function ProductDetailPage() {
                   <p className="font-display mt-4 text-xl font-light italic text-forest">
                     {parsed.tagline}
                   </p>
+                </Reveal>
+              )}
+
+              {summary.count > 0 && (
+                <Reveal delay={0.25}>
+                  <a
+                    href="#reviews"
+                    className="mt-5 inline-flex items-center gap-2.5 text-sm text-ink/70 transition-colors hover:text-ink"
+                  >
+                    <Stars value={summary.average} className="h-[1.1rem] w-[1.1rem]" />
+                    <span className="font-semibold text-ink">
+                      {summary.average.toFixed(1)}
+                    </span>
+                    <span className="link-rule">{summary.count} reviews</span>
+                  </a>
                 </Reveal>
               )}
 
@@ -340,18 +368,21 @@ export default function ProductDetailPage() {
                   </p>
                 )}
 
-                {/* The quiet assurances */}
+                {/* The quiet assurances — specific, and each links to its policy */}
                 <dl className="hairline-t mt-10 grid grid-cols-2 gap-x-6 gap-y-4 pt-7 sm:grid-cols-4">
-                  {["Free shipping", "100% organic", "Lab-tested", "Easy returns"].map(
-                    (label) => (
-                      <div key={label} className="text-center sm:text-left">
-                        <dt className="sr-only">{label}</dt>
-                        <dd className="text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-ink/70">
+                  {PRODUCT_ASSURANCES.map(({ label, href }) => (
+                    <div key={label} className="text-center sm:text-left">
+                      <dt className="sr-only">{label}</dt>
+                      <dd>
+                        <Link
+                          href={href}
+                          className="text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-ink/70 transition-colors hover:text-ink"
+                        >
                           {label}
-                        </dd>
-                      </div>
-                    )
-                  )}
+                        </Link>
+                      </dd>
+                    </div>
+                  ))}
                 </dl>
               </Reveal>
             </div>
@@ -425,24 +456,55 @@ export default function ProductDetailPage() {
       </section>
 
       {/* ═══ Act IV — The ritual ═══ */}
-      <section aria-label="How to use" className="bg-parchment-deep py-24 sm:py-32">
-        <div className="mx-auto max-w-[1480px] px-5 sm:px-8 lg:px-12">
-          <Reveal>
-            <p className="eyebrow text-forest">The ritual</p>
-            <h2 className="font-display mt-5 text-3xl font-light text-ink sm:text-4xl">
-              How it&rsquo;s done
-            </h2>
-          </Reveal>
+      <section
+        aria-label="How to use"
+        className="relative overflow-hidden bg-parchment-deep py-24 sm:py-32"
+      >
+        <Illustration
+          name={productGlyph}
+          className="pointer-events-none absolute -right-12 -top-12 h-64 w-64 text-forest/[0.06] sm:h-80 sm:w-80"
+        />
+        <div className="relative mx-auto max-w-[1480px] px-5 sm:px-8 lg:px-12">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <Reveal>
+              <p className="eyebrow text-forest">The ritual</p>
+              <h2 className="font-display mt-5 text-3xl font-light text-ink sm:text-4xl">
+                How it&rsquo;s done
+              </h2>
+              <p className="prose-editorial mt-4 max-w-md text-ink/65">
+                Four unhurried steps — the whole of it. No spoonfuls of chemistry,
+                no second-guessing.
+              </p>
+            </Reveal>
+            <Reveal delay={0.15}>
+              <Link
+                href="/learn/feeding-without-fear"
+                className="link-rule group inline-flex text-[0.75rem] font-bold uppercase tracking-[0.2em] text-ink/70 hover:text-ink"
+              >
+                Read the full feeding guide
+                <ArrowRight
+                  className="h-3.5 w-3.5 transition-transform duration-500 group-hover:translate-x-1"
+                  strokeWidth={1.5}
+                />
+              </Link>
+            </Reveal>
+          </div>
           <Stagger
             className="mt-14 grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4"
             stagger={0.12}
           >
             {(narrative?.ritual ?? GENERIC_RITUAL).map((step, i) => (
               <StaggerItem key={step.title}>
-                <p className="font-display text-5xl font-light text-clay/45">
-                  {String(i + 1).padStart(2, "0")}
-                </p>
-                <h3 className="font-display mt-4 text-xl font-medium text-ink">
+                <div className="flex items-center gap-4">
+                  <Illustration
+                    name={RITUAL_GLYPHS[i % RITUAL_GLYPHS.length]}
+                    className="h-11 w-11 shrink-0 text-forest"
+                  />
+                  <p className="font-display text-5xl font-light text-clay/40">
+                    {String(i + 1).padStart(2, "0")}
+                  </p>
+                </div>
+                <h3 className="font-display mt-5 text-xl font-medium text-ink">
                   {step.title}
                 </h3>
                 <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-ink/70">
@@ -511,6 +573,14 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </section>
+
+      {/* ═══ Risk-free — the specifics ═══ */}
+      <div className="bg-parchment pb-24 sm:pb-28">
+        <Guarantees heading="A purchase you can't lose on" />
+      </div>
+
+      {/* ═══ Reviews — trust, in the customers' words ═══ */}
+      <Reviews slug={slug} />
 
       {/* ═══ Act VI — Pairings ═══ */}
       {pairings.length > 0 && (

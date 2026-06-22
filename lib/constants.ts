@@ -5,11 +5,11 @@ export const SITE_CONFIG = {
   url: "https://myfolia.in",
   ogImage: "https://myfolia.in/opengraph-image",
   links: {
-    instagram: "https://instagram.com/folia",
+    instagram: "https://www.instagram.com/my_folia/",
     facebook: "https://facebook.com/folia",
     twitter: "https://twitter.com/folia",
   },
   contact: {
-    email: "admin@myaangan.in",
+    email: "support@myfolia.in",
   },
 };

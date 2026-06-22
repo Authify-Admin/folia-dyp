@@ -3,10 +3,10 @@ import { PolicyPage } from "@/components/policy/PolicyPage";
 import { POLICIES } from "@/lib/policies";
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
-  description: POLICIES.terms.dek,
+  title: "Shipping Policy",
+  description: POLICIES.shipping.dek,
 };
 
-export default function TermsPage() {
-  return <PolicyPage doc={POLICIES.terms} />;
+export default function ShippingPage() {
+  return <PolicyPage doc={POLICIES.shipping} />;
 }

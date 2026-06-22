@@ -4,21 +4,25 @@ import Link from "next/link";
 import { ParallaxImage } from "@/components/motion/ParallaxImage";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import { TextReveal } from "@/components/motion/TextReveal";
+import { Illustration } from "@/components/illustrations/Illustration";
 
 const PROMISES = [
   {
     numeral: "I",
     title: "Trust",
+    illustration: "helping-hand",
     body: "Every bag is exactly what its label says — cured fully, tested honestly, never padded or rushed. We built Folia to be the brand we ourselves would buy from without checking twice.",
   },
   {
     numeral: "II",
     title: "Service",
-    body: "Free delivery to your door, easy returns when something isn't right, and people — not scripts — who answer when you write to us. A garden is patient with you; so are we.",
+    illustration: "watering-can",
+    body: "Free delivery to your door, easy 14-day returns when something isn't right, and people — not scripts — who answer when you write to us. A garden is patient with you; so are we.",
   },
   {
     numeral: "III",
     title: "Quality",
+    illustration: "sprout",
     body: "Small batches, slow processes, organic inputs. Quality in plant care isn't a finish — it's what's left when you refuse every shortcut between the soil and the bag.",
   },
 ];
@@ -81,30 +85,33 @@ export default function StoryPage() {
             </div>
             <div className="lg:w-[55%]">
               <Reveal>
-                <p className="eyebrow text-sage">Chapter I — The hands</p>
+                <p className="eyebrow text-sage">Chapter I — From the fields</p>
               </Reveal>
               <TextReveal
                 as="h2"
-                text={"Decades with our\nhands in the soil."}
+                text={"Decades in the\nfields, first."}
                 className="font-display mt-7 text-4xl font-light leading-[1.08] text-cream sm:text-5xl lg:text-6xl"
                 stagger={0.06}
               />
               <Reveal delay={0.25}>
                 <div className="prose-editorial mt-8 max-w-xl space-y-6 text-cream/65">
                   <p>
-                    Before there was a label, there were years of them —
-                    seasons of composting, growing, failing, and learning what
-                    soil actually wants. The people behind Folia have spent
-                    multiple decades in this craft: in nurseries and kitchen
-                    gardens, in fields and on balconies.
+                    Long before Folia, there was the work: making organic
+                    fertilizers and supplying farmers, nurseries, landscapers and
+                    growers across Karnataka and beyond. That is the legacy of{" "}
+                    <em className="text-cream">Amruth Organic Fertilizers</em> —
+                    one of the state&rsquo;s established organic fertilizer
+                    manufacturers, and the real growing expertise Folia is built
+                    on.
                   </p>
                   <p>
-                    That much time teaches you one stubborn lesson:{" "}
+                    Working soil at that scale teaches you one stubborn lesson:{" "}
                     <em className="text-cream">
                       there are no shortcuts underground.
                     </em>{" "}
                     Nutrition that arrives slowly stays. Structure that builds
-                    naturally lasts. Everything we sell follows from that.
+                    naturally lasts. Everything we make for your home follows from
+                    that.
                   </p>
                 </div>
               </Reveal>
@@ -123,7 +130,7 @@ export default function StoryPage() {
               </Reveal>
               <TextReveal
                 as="h2"
-                text={"Folia, founded 2025.\nYoung label, old wisdom."}
+                text={"From fields,\nto homes."}
                 className="font-display mt-7 text-4xl font-light leading-[1.08] text-ink sm:text-5xl"
                 stagger={0.05}
               />
@@ -132,10 +139,12 @@ export default function StoryPage() {
               <Reveal delay={0.2}>
                 <div className="prose-editorial max-w-xl space-y-6 text-ink/70">
                   <p>
-                    Folia grew out of the Aanagan family — a name built on
-                    the same ground we stand on. In 2025 we gave our plant-care
-                    work its own roof: a brand dedicated to helping greens
-                    thrive, naturally.
+                    As gardening became a lifestyle for urban India, we saw a
+                    gap. People wanted healthy plants — but not the jargon, the
+                    guesswork, or the farm-sized sacks. So in 2025,{" "}
+                    <em className="text-forest">My Aangan Eco Pvt Ltd</em> gave
+                    that expertise a new home for the home gardener: Folia, for
+                    balconies, terraces and windowsills.
                   </p>
                   <p>
                     The promise on every pouch is two words long:{" "}
@@ -206,10 +215,14 @@ export default function StoryPage() {
           <Stagger className="mt-16 grid grid-cols-1 gap-14 lg:grid-cols-3" stagger={0.15}>
             {PROMISES.map((promise) => (
               <StaggerItem key={promise.title}>
-                <p className="font-display text-2xl font-light italic text-clay">
+                <Illustration
+                  name={promise.illustration}
+                  className="h-14 w-14 text-forest"
+                />
+                <p className="font-display mt-6 text-2xl font-light italic text-clay">
                   {promise.numeral}
                 </p>
-                <h3 className="font-display mt-4 text-3xl font-medium text-ink">
+                <h3 className="font-display mt-2 text-3xl font-medium text-ink">
                   {promise.title}
                 </h3>
                 <p className="prose-editorial mt-4 max-w-sm text-ink/65">

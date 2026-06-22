@@ -41,9 +41,9 @@ export function StoryTeaser() {
 
         <Reveal delay={0.3}>
           <p className="prose-editorial mx-auto mt-9 max-w-xl text-cream/65">
-            Folia is young. The hands behind it are not. We started this brand
-            after decades of growing, composting and tending — because plant
-            care had become complicated, and soil never was.
+            Folia is young. The expertise behind it is not. A brand of My Aangan
+            Eco Pvt Ltd, built on the legacy of Amruth Organic Fertilizers —
+            decades of organic growing, now simplified for your home.
           </p>
         </Reveal>
 

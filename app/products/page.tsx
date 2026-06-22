@@ -9,6 +9,7 @@ import type { Product } from "@/lib/types";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/motion/Reveal";
 import { TextReveal } from "@/components/motion/TextReveal";
+import { Guarantees } from "@/components/Guarantees";
 import { CATEGORY_INTROS } from "@/lib/catalog";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -202,6 +203,10 @@ export default function ProductsPage() {
             </AnimatePresence>
           </>
         )}
+      </div>
+
+      <div className="pb-24 sm:pb-28">
+        <Guarantees heading="Risk-free, every order" />
       </div>
     </div>
   );
